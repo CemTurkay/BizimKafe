@@ -38,8 +38,6 @@ namespace BizimKafe.UI
                 OrnekVerileriYukle();
             }
         }
-
-
         private void OrnekVerileriYukle()
         {
             db.Urunler.Add(new Urun { UrunAd = "Kola", BirimFiyat = 7.00m});
