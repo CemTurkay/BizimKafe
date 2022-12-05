@@ -68,12 +68,30 @@ namespace BizimKafe.UI
                 lvi.ImageKey = "dolu";
             }
 
-            var frmSiparis = new SiparisForm(db, siparis);
+            SiparisForm frmSiparis = new SiparisForm(db, siparis);
+            frmSiparis.MasaTasindi += FrmSiparis_MasaTasindi;
             DialogResult sonuc = frmSiparis.ShowDialog();
 
             if (sonuc == DialogResult.OK)
                 lvi.ImageKey = "bos";
 
+        }
+
+        private void FrmSiparis_MasaTasindi(int eskiMasaNo, int yeniMasaMo)
+        {
+            foreach (ListViewItem item in lvwMasalar.Items)
+            {
+                int masaNo = (int)item.Tag;
+                if (masaNo == eskiMasaNo)
+                {
+                    item.ImageKey = "bos";
+                }
+                else if (masaNo == yeniMasaMo)
+                {
+                    item.ImageKey = "dolu";
+                }
+                
+            };
         }
 
         private void tsmiGecmisSiparisler_Click(object sender, EventArgs e)

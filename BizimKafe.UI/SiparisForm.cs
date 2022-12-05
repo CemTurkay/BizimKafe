@@ -13,6 +13,8 @@ namespace BizimKafe.UI
 {
     public partial class SiparisForm : Form
     {
+        public event MasaTasindiEventHandler MasaTasindi;
+
         private readonly KafeVeri _db;
         private readonly Siparis _siparis;
 
@@ -21,7 +23,7 @@ namespace BizimKafe.UI
             _db = db;
             _siparis = siparis;            
             InitializeComponent();
-
+            
             BilgileriGuncelle();
             UrunleriListele();
         }
@@ -29,6 +31,7 @@ namespace BizimKafe.UI
         private void UrunleriListele()
         {
             cmbUrun.DataSource = _db.Urunler;
+         
         }
 
         private void BilgileriGuncelle()
@@ -37,7 +40,21 @@ namespace BizimKafe.UI
             lblMasaNo.Text = _siparis.MasaNo.ToString("00");
             lblOdemeTutari.Text = _siparis.ToplamTutarTL;
             dgvSiparisDetaylar.DataSource = _siparis.SiparisDetaylar.ToList();
+            MasaNolariYukle();
             
+        }
+
+        private void MasaNolariYukle()
+        {
+            cmbMasa.Items.Clear();
+            for (int i = 1; i <= _db.MasaAdet; i++)
+            {
+                if (!_db.AktifSiparisler.Any(x => x.MasaNo == i))
+                {
+                    cmbMasa.Items.Add(i);
+                }
+
+            };
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -92,6 +109,21 @@ namespace BizimKafe.UI
             _db.GecmisSiparisler.Add(_siparis);
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void btnTasi_Click(object sender, EventArgs e)
+        {
+            if (cmbMasa.SelectedIndex < 0) return;
+
+            int eskiMasaNo = _siparis.MasaNo;
+            int hedefNo = (int)cmbMasa.SelectedItem;
+            _siparis.MasaNo = hedefNo; 
+            BilgileriGuncelle();
+
+            if (MasaTasindi != null)
+            {
+                MasaTasindi(eskiMasaNo, hedefNo);
+            }
         }
     }
 }
